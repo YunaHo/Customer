@@ -7,17 +7,31 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using X.PagedList;
 
 namespace Customer.Controllers
 {
     public class 客戶資料Controller : Controller
     {
         private 客戶資料Entities db = new 客戶資料Entities();
-
+        private int pageSize = 10;
         // GET: 客戶資料
-        public ActionResult Index()
+        public ActionResult Index(string keyword, int Page = 1)
         {
-            return View(db.客戶資料.ToList());
+            var 客戶資料 = db.客戶資料.AsQueryable();
+            if(string.IsNullOrEmpty(keyword))
+            {
+                keyword = ViewBag.keywordVB;
+            }
+
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                客戶資料 = 客戶資料.Where(p => p.客戶名稱.Contains(keyword));
+            }
+            ViewBag.keywordVB = keyword;
+
+            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+            return View(客戶資料.ToPagedList(Page, pageSize));
         }
 
         // GET: 客戶資料/Details/5

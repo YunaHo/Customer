@@ -48,7 +48,7 @@ namespace Customer
                     select new 客戶資料()
                     {
                         Id = number,
-                        客戶名稱 = $"Company{number}",
+                        客戶名稱 = $"Company{number.ToString("00")}",
                         統一編號 = RandomNumber(8),
                         電話 = $"0{random.Next(1, 9)}-{RandomNumber(9)}",
                         傳真 = $"0{random.Next(1, 9)}-{RandomNumber(9)}",
@@ -64,10 +64,10 @@ namespace Customer
                     {
                         Id = number,
                         客戶Id = 公司Id,
-                        銀行名稱 = $"銀行{number}",
+                        銀行名稱 = $"銀行{number.ToString("00")}",
                         分行代碼 = number * number,
                         銀行代碼 = number * 3 + random.Next(1, 9),
-                        帳戶名稱 = $"{公司名稱}帳戶名稱{number}",
+                        帳戶名稱 = $"{公司名稱}帳戶名稱{number.ToString("00")}",
                         帳戶號碼 = RandomNumber(10)
                     });
         }
@@ -81,7 +81,7 @@ namespace Customer
                         Id = number,
                         客戶Id = 公司Id,
                         姓名 = name,
-                        Email = $"{RandomEnglishName()}{number}@{公司名稱}.com",
+                        Email = $"{RandomEnglishName()}{number.ToString("00")}@{公司名稱}.com",
                         手機 = $"09{RandomNumber(2)}-{RandomNumber(6)}",
                         職稱 = Random職稱(),
                         電話 = $"0{random.Next(1, 9)}-{RandomNumber(9)}"
