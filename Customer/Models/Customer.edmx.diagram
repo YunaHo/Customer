@@ -6,11 +6,13 @@
     <edmx:Diagrams>
       <Diagram DiagramId="36d0455472fc485f8decff0e5b5b6bcb" Name="Diagram1">
         <EntityTypeShape EntityType="客戶資料Model.sysdiagrams" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
-        <EntityTypeShape EntityType="客戶資料Model.客戶資料" Width="1.5" PointX="0.75" PointY="2.625" IsExpanded="true" />
         <EntityTypeShape EntityType="客戶資料Model.客戶銀行資訊" Width="1.5" PointX="3" PointY="1.125" IsExpanded="true" />
         <EntityTypeShape EntityType="客戶資料Model.客戶聯絡人" Width="1.5" PointX="3" PointY="4.375" IsExpanded="true" />
-        <AssociationConnector Association="客戶資料Model.FK_客戶銀行資訊_客戶資料" ManuallyRouted="false" />
-        <AssociationConnector Association="客戶資料Model.FK_客戶聯絡人_客戶資料" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="客戶資料Model.客戶分類" Width="1.5" PointX="0.75" PointY="0.75" />
+        <EntityTypeShape EntityType="客戶資料Model.客戶資料" Width="1.5" PointX="0.75" PointY="4" />
+        <AssociationConnector Association="客戶資料Model.FK_客戶資料_客戶分類" />
+        <AssociationConnector Association="客戶資料Model.FK_客戶銀行資訊_客戶資料" />
+        <AssociationConnector Association="客戶資料Model.FK_客戶聯絡人_客戶資料" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

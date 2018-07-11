@@ -16,7 +16,7 @@ namespace Customer.Controllers
         public 客戶資料Controller()
         {
             客戶資料repo = RepositoryHelper.Get客戶資料Repository();
-
+            客戶分類repo = RepositoryHelper.Get客戶分類Repository();
         }
 
         // GET: 客戶資料
@@ -52,6 +52,7 @@ namespace Customer.Controllers
         // GET: 客戶資料/Create
         public ActionResult Create()
         {
+            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱");
             return View();
         }
 
@@ -60,7 +61,7 @@ namespace Customer.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Create([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類Id")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -84,6 +85,7 @@ namespace Customer.Controllers
             {
                 return HttpNotFound();
             }
+            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
             return View(客戶資料);
         }
 
@@ -92,7 +94,7 @@ namespace Customer.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email")] 客戶資料 客戶資料)
+        public ActionResult Edit([Bind(Include = "Id,客戶名稱,統一編號,電話,傳真,地址,Email,客戶分類Id")] 客戶資料 客戶資料)
         {
             if (ModelState.IsValid)
             {
@@ -101,6 +103,7 @@ namespace Customer.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
+            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
             return View(客戶資料);
         }
 

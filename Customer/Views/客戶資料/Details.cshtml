@@ -4,12 +4,18 @@
     ViewBag.Title = "Details";
 }
 
-<h2>Details</h2>
+<h2>客戶詳細資料</h2>
 
 <div>
-    <h4>客戶資料</h4>
     <hr />
     <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.客戶分類.分類名稱)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.客戶分類.分類名稱)
+        </dd>
         <dt>
             @Html.DisplayNameFor(model => model.客戶名稱)
         </dt>

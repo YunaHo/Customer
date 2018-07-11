@@ -8,7 +8,6 @@ using System.Web;
 namespace Customer
 {
 
-
     public class DatabaseInit
     {
         static Random random = new Random();
@@ -20,6 +19,7 @@ namespace Customer
                 context.客戶銀行資訊.RemoveRange(context.客戶銀行資訊);
                 context.客戶聯絡人.RemoveRange(context.客戶聯絡人);
                 context.客戶資料.RemoveRange(context.客戶資料);
+                context.客戶分類.RemoveRange(context.客戶分類);
                 context.SaveChanges();
             }
         }
@@ -30,10 +30,12 @@ namespace Customer
             {
                 if (!context.客戶資料.Any())
                 {
+                    var classification = Random客戶分類().ToArray();
                     var customers = Random客戶資料(50).ToArray();
                     var blanks = customers.SelectMany(c => Random銀行資訊(random.Next(1, 10), c.客戶名稱, c.Id)).ToArray();
                     var concats = customers.SelectMany(c => Random客戶聯絡人(random.Next(1, 10), c.客戶名稱, c.Id)).ToArray();
 
+                    context.客戶分類.AddOrUpdate(classification);
                     context.客戶資料.AddOrUpdate(customers);
                     context.客戶聯絡人.AddOrUpdate(concats);
                     context.客戶銀行資訊.AddOrUpdate(blanks);
@@ -41,6 +43,7 @@ namespace Customer
                 }
             }
         }
+
 
         private static IEnumerable<客戶資料> Random客戶資料(int count)
         {
@@ -50,10 +53,12 @@ namespace Customer
                         Id = number,
                         客戶名稱 = $"Company{number.ToString("00")}",
                         統一編號 = RandomNumber(8),
-                        電話 = $"0{random.Next(1, 9)}-{RandomNumber(9)}",
-                        傳真 = $"0{random.Next(1, 9)}-{RandomNumber(9)}",
+                        電話 = $"0{random.Next(1, 9)}-{RandomNumber(8)}",
+                        傳真 = $"0{random.Next(1, 9)}-{RandomNumber(8)}",
                         Email = $"Company{number}@Company{number}.com",
-                        地址 = RandomAddress()
+                        地址 = RandomAddress(),
+                        是否已刪除 = false,
+                        客戶分類Id = Random分類()
                     });
         }
 
@@ -68,7 +73,8 @@ namespace Customer
                         分行代碼 = number * number,
                         銀行代碼 = number * 3 + random.Next(1, 9),
                         帳戶名稱 = $"{公司名稱}帳戶名稱{number.ToString("00")}",
-                        帳戶號碼 = RandomNumber(10)
+                        帳戶號碼 = RandomNumber(10),
+                        是否已刪除 = false
                     });
         }
 
@@ -84,7 +90,22 @@ namespace Customer
                         Email = $"{RandomEnglishName()}{number.ToString("00")}@{公司名稱}.com",
                         手機 = $"09{RandomNumber(2)}-{RandomNumber(6)}",
                         職稱 = Random職稱(),
-                        電話 = $"0{random.Next(1, 9)}-{RandomNumber(9)}"
+                        電話 = $"0{random.Next(1, 9)}-{RandomNumber(8)}",
+                        是否已刪除 = false
+                    });
+        }
+
+        private static IEnumerable<客戶分類> Random客戶分類()
+        {
+
+            string[] classification = new[] { "銀行", "機械", "百貨", "資訊" };
+            return (from number in Enumerable.Range(1, classification.Length)
+                    let name = classification
+                    select new 客戶分類()
+                    {
+                        Id = (number),
+                        分類名稱 = classification[number - 1],
+                        是否已刪除 = false
                     });
         }
 
@@ -132,6 +153,15 @@ namespace Customer
         private static string Random職稱()
         {
             string[] name = new[] { "經理", "工程師", "業務", "客服", "接線生", "警衛" };
+
+            int index = random.Next(0, name.Length - 1);
+
+            return name[index];
+        }
+
+        private static int Random分類()
+        {
+            int[] name = new[] { 1, 2, 3, 4 };
 
             int index = random.Next(0, name.Length - 1);
 

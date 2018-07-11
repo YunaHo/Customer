@@ -7,18 +7,29 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using X.PagedList;
 
 namespace Customer.Controllers
 {
-    public class 客戶聯絡人Controller : Controller
+    public class 客戶聯絡人Controller : BaseController
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
-
-        // GET: 客戶聯絡人
-        public ActionResult Index()
+        public 客戶聯絡人Controller()
         {
-            var 客戶聯絡人 = db.客戶聯絡人.Include(客 => 客.客戶資料);
-            return View(客戶聯絡人.ToList());
+            客戶資料repo = RepositoryHelper.Get客戶資料Repository();
+            客戶聯絡人repo = RepositoryHelper.Get客戶聯絡人Repository();
+        }
+        // GET: 客戶聯絡人
+        public ActionResult Index(string keyword, int Page = 1)
+        {
+            if (string.IsNullOrEmpty(keyword))
+            {
+                keyword = ViewBag.keywordVB;
+            }
+            var 客戶聯絡人 = 客戶聯絡人repo.搜尋(keyword);
+
+            ViewBag.keywordVB = keyword;
+
+            return View(客戶聯絡人.ToPagedList(Page, pageSize));
         }
 
         // GET: 客戶聯絡人/Details/5
@@ -28,7 +39,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 = 客戶聯絡人repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -39,7 +50,7 @@ namespace Customer.Controllers
         // GET: 客戶聯絡人/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -52,12 +63,12 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶聯絡人.Add(客戶聯絡人);
-                db.SaveChanges();
+                客戶聯絡人repo.Add(客戶聯絡人);
+                客戶聯絡人repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -68,12 +79,12 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 =客戶聯絡人repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -86,11 +97,12 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = 客戶聯絡人repo.UnitOfWork.Context;
                 db.Entry(客戶聯絡人).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶聯絡人.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶聯絡人.客戶Id);
             return View(客戶聯絡人);
         }
 
@@ -101,7 +113,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
+            客戶聯絡人 客戶聯絡人 =客戶聯絡人repo.Find(id.Value);
             if (客戶聯絡人 == null)
             {
                 return HttpNotFound();
@@ -114,9 +126,9 @@ namespace Customer.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶聯絡人 客戶聯絡人 = db.客戶聯絡人.Find(id);
-            db.客戶聯絡人.Remove(客戶聯絡人);
-            db.SaveChanges();
+            客戶聯絡人 客戶聯絡人 =客戶聯絡人repo.Find(id);
+            客戶聯絡人repo.Delete(客戶聯絡人);
+            客戶聯絡人repo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 

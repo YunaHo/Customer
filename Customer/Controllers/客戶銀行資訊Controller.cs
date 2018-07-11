@@ -7,19 +7,32 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using X.PagedList;
 
 namespace Customer.Controllers
 {
-    public class 客戶銀行資訊Controller : Controller
+    public class 客戶銀行資訊Controller : BaseController
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
+        public 客戶銀行資訊Controller()
+        {
+            客戶資料repo = RepositoryHelper.Get客戶資料Repository();
+            客戶銀行資訊repo = RepositoryHelper.Get客戶銀行資訊Repository();
+        }
 
         // GET: 客戶銀行資訊
-        public ActionResult Index()
+        public ActionResult Index(string keyword, int Page = 1)
         {
-            var 客戶銀行資訊 = db.客戶銀行資訊.Include(客 => 客.客戶資料);
-            return View(客戶銀行資訊.ToList());
+            if (string.IsNullOrEmpty(keyword))
+            {
+                keyword = ViewBag.keywordVB;
+            }
+            var 客戶銀行資訊 = 客戶銀行資訊repo.搜尋(keyword);
+
+            ViewBag.keywordVB = keyword;
+
+            return View(客戶銀行資訊.ToPagedList(Page, pageSize));
         }
+
 
         // GET: 客戶銀行資訊/Details/5
         public ActionResult Details(int? id)
@@ -28,7 +41,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = 客戶銀行資訊repo.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -39,7 +52,7 @@ namespace Customer.Controllers
         // GET: 客戶銀行資訊/Create
         public ActionResult Create()
         {
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱");
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱");
             return View();
         }
 
@@ -52,12 +65,12 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶銀行資訊.Add(客戶銀行資訊);
-                db.SaveChanges();
+                客戶銀行資訊repo.Add(客戶銀行資訊);
+                客戶銀行資訊repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -68,12 +81,12 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = 客戶銀行資訊repo.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -86,11 +99,12 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = 客戶銀行資訊repo.UnitOfWork.Context;
                 db.Entry(客戶銀行資訊).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶Id = new SelectList(db.客戶資料, "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
+            ViewBag.客戶Id = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", 客戶銀行資訊.客戶Id);
             return View(客戶銀行資訊);
         }
 
@@ -101,7 +115,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
+            客戶銀行資訊 客戶銀行資訊 = 客戶銀行資訊repo.Find(id.Value);
             if (客戶銀行資訊 == null)
             {
                 return HttpNotFound();
@@ -114,9 +128,9 @@ namespace Customer.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶銀行資訊 客戶銀行資訊 = db.客戶銀行資訊.Find(id);
-            db.客戶銀行資訊.Remove(客戶銀行資訊);
-            db.SaveChanges();
+            客戶銀行資訊 客戶銀行資訊 = 客戶銀行資訊repo.Find(id);
+            客戶銀行資訊repo.Delete(客戶銀行資訊);
+            客戶銀行資訊repo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 

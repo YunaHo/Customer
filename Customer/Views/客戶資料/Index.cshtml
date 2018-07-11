@@ -22,6 +22,9 @@
 <table class="table">
     <tr>
         <th>
+            @Html.DisplayNameFor(model => model.客戶分類.分類名稱)
+        </th>
+        <th>
             @Html.DisplayNameFor(model => model.客戶名稱)
         </th>
         <th>
@@ -45,6 +48,9 @@
     @foreach (var item in Model)
     {
         <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.客戶分類.分類名稱)
+            </td>
             <td>
                 @Html.DisplayFor(modelItem => item.客戶名稱)
             </td>

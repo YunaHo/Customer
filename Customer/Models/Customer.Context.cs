@@ -28,9 +28,10 @@ namespace Customer.Models
         }
     
         public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
-        public virtual DbSet<客戶資料> 客戶資料 { get; set; }
         public virtual DbSet<客戶銀行資訊> 客戶銀行資訊 { get; set; }
         public virtual DbSet<客戶聯絡人> 客戶聯絡人 { get; set; }
+        public virtual DbSet<客戶分類> 客戶分類 { get; set; }
+        public virtual DbSet<客戶資料> 客戶資料 { get; set; }
     
         public virtual ObjectResult<usp_客戶資料統計_Result> usp_客戶資料統計()
         {

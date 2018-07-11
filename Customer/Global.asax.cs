@@ -19,7 +19,7 @@ namespace Customer
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
             //DatabaseInit.RemoveAll();
-            DatabaseInit.Init();
+            //DatabaseInit.Init();
         }
     }
 }
