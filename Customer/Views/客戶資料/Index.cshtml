@@ -7,15 +7,15 @@
 <p>
     @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get))
     {
-    <div class="form-horizontal">
+        <div class="form-horizontal">
             @Html.Label("客戶名稱")
-            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control", placeholder = "請輸入客戶名稱" })
-        
-        <br/>
-        <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
-    </div>
-     }
-    </p>
+            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
+
+            <br />
+            <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
+        </div>
+    }
+</p>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -73,3 +73,4 @@
 </table>
 
 @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB }))
+

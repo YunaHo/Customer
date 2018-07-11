@@ -11,28 +11,28 @@ using X.PagedList;
 
 namespace Customer.Controllers
 {
-    public class 客戶資料Controller : Controller
+    public class 客戶資料Controller : BaseController
     {
-        private 客戶資料Entities db = new 客戶資料Entities();
-        private int pageSize = 10;
+        public 客戶資料Controller()
+        {
+            客戶資料repo = RepositoryHelper.Get客戶資料Repository();
+
+        }
+
         // GET: 客戶資料
         public ActionResult Index(string keyword, int Page = 1)
         {
-            var 客戶資料 = db.客戶資料.AsQueryable();
             if(string.IsNullOrEmpty(keyword))
             {
                 keyword = ViewBag.keywordVB;
             }
+            var 客戶資料=客戶資料repo.搜尋(keyword);
 
-            if (!string.IsNullOrEmpty(keyword))
-            {
-                客戶資料 = 客戶資料.Where(p => p.客戶名稱.Contains(keyword));
-            }
             ViewBag.keywordVB = keyword;
 
-            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
             return View(客戶資料.ToPagedList(Page, pageSize));
         }
+
 
         // GET: 客戶資料/Details/5
         public ActionResult Details(int? id)
@@ -41,7 +41,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = 客戶資料repo.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -64,8 +64,8 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
-                db.客戶資料.Add(客戶資料);
-                db.SaveChanges();
+                客戶資料repo.Add(客戶資料);
+                客戶資料repo.UnitOfWork.Commit();
                 return RedirectToAction("Index");
             }
 
@@ -79,7 +79,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = 客戶資料repo.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -96,6 +96,7 @@ namespace Customer.Controllers
         {
             if (ModelState.IsValid)
             {
+                var db = 客戶資料repo.UnitOfWork.Context;
                 db.Entry(客戶資料).State = EntityState.Modified;
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -110,7 +111,7 @@ namespace Customer.Controllers
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
+            客戶資料 客戶資料 = 客戶資料repo.Find(id.Value);
             if (客戶資料 == null)
             {
                 return HttpNotFound();
@@ -123,9 +124,9 @@ namespace Customer.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult DeleteConfirmed(int id)
         {
-            客戶資料 客戶資料 = db.客戶資料.Find(id);
-            db.客戶資料.Remove(客戶資料);
-            db.SaveChanges();
+            客戶資料 客戶資料 = 客戶資料repo.Find(id);
+            客戶資料repo.Delete(客戶資料);
+            客戶資料repo.UnitOfWork.Commit();
             return RedirectToAction("Index");
         }
 
@@ -133,7 +134,7 @@ namespace Customer.Controllers
         {
             if (disposing)
             {
-                db.Dispose();
+                客戶資料repo.UnitOfWork.Context.Dispose();
             }
             base.Dispose(disposing);
         }
