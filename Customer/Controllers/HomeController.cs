@@ -6,11 +6,12 @@ using System.Web.Mvc;
 
 namespace Customer.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : BaseController
     {
         public ActionResult Index()
         {
-            return View();
+            var 客戶資料統計 = db.usp_客戶資料統計();
+            return View(客戶資料統計);
         }
 
         public ActionResult About()

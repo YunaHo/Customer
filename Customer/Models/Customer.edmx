@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="客戶資料Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="客戶資料Model.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="sysdiagrams">
           <Key>
             <PropertyRef Name="diagram_id" />
@@ -75,6 +75,7 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Function Name="usp_客戶資料統計" Aggregate="false" BuiltIn="false" NiladicFunction="false" IsComposable="false" ParameterTypeSemantics="AllowImplicitConversion" Schema="dbo" />
         <EntityContainer Name="客戶資料ModelStoreContainer">
           <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="客戶資料" EntityType="Self.客戶資料" Schema="dbo" store:Type="Tables" />
@@ -89,8 +90,7 @@
             <End Role="客戶聯絡人" EntitySet="客戶聯絡人" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="客戶資料Model" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -181,7 +181,14 @@
             <End Role="客戶資料" EntitySet="客戶資料" />
             <End Role="客戶聯絡人" EntitySet="客戶聯絡人" />
           </AssociationSet>
+          <FunctionImport Name="usp_客戶資料統計" ReturnType="Collection(客戶資料Model.usp_客戶資料統計_Result)" />
         </EntityContainer>
+        <ComplexType Name="usp_客戶資料統計_Result">
+          <Property Type="Int32" Name="Id" Nullable="false" />
+          <Property Type="String" Name="客戶名稱" Nullable="false" MaxLength="50" />
+          <Property Type="Int32" Name="銀行數量" Nullable="true" />
+          <Property Type="Int32" Name="聯絡人數量" Nullable="true" />
+        </ComplexType>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -238,6 +245,16 @@
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>
+          <FunctionImportMapping FunctionImportName="usp_客戶資料統計" FunctionName="客戶資料Model.Store.usp_客戶資料統計">
+            <ResultMapping>
+              <ComplexTypeMapping TypeName="客戶資料Model.usp_客戶資料統計_Result">
+                <ScalarProperty Name="Id" ColumnName="Id" />
+                <ScalarProperty Name="客戶名稱" ColumnName="客戶名稱" />
+                <ScalarProperty Name="銀行數量" ColumnName="銀行數量" />
+                <ScalarProperty Name="聯絡人數量" ColumnName="聯絡人數量" />
+              </ComplexTypeMapping>
+            </ResultMapping>
+          </FunctionImportMapping>
         </EntityContainerMapping>
       </Mapping>
     </edmx:Mappings>

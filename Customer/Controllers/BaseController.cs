@@ -13,6 +13,6 @@ namespace Customer.Controllers
         protected 客戶資料Repository 客戶資料repo;
 
         protected 客戶資料Entities db = new 客戶資料Entities();
-
+        
     }
 }
