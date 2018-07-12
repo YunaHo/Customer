@@ -19,18 +19,29 @@ namespace Customer.Controllers
             客戶聯絡人repo = RepositoryHelper.Get客戶聯絡人Repository();
         }
         // GET: 客戶聯絡人
-        public ActionResult Index(string keyword, int Page = 1)
+        public ActionResult Index(string keyword,string  keyword2, int Page = 1)
         {
             if (string.IsNullOrEmpty(keyword))
             {
                 keyword = ViewBag.keywordVB;
             }
-            var 客戶聯絡人 = 客戶聯絡人repo.搜尋(keyword);
+            if (string.IsNullOrEmpty(keyword2))
+            {
+                keyword2 = ViewBag.keyword2VB;
+            }
+
+            var 客戶聯絡人 = 客戶聯絡人repo.搜尋(客戶聯絡人repo.All(), keyword);
+            客戶聯絡人 = 客戶聯絡人repo.搜尋職稱(客戶聯絡人, keyword2);
 
             ViewBag.keywordVB = keyword;
+            ViewBag.keyword2VB = keyword2;
+
+            ViewBag.職稱 = new SelectList(客戶聯絡人repo.職稱(), "Key", "Value", keyword2);
 
             return View(客戶聯絡人.ToPagedList(Page, pageSize));
         }
+
+
 
         // GET: 客戶聯絡人/Details/5
         public ActionResult Details(int? id)

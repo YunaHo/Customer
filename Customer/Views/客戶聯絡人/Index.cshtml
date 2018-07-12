@@ -7,7 +7,20 @@
 }
 
 <h2>客戶聯絡人</h2>
-
+<p>
+    @using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Get))
+    {
+    <div class="form-horizontal">
+        @Html.Label("姓名")
+        @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入姓名" })
+        <br />
+        @Html.Label("職稱")
+        @Html.DropDownList("keyword2", ViewBag.職稱 as SelectList, "請選擇職稱", htmlAttributes: new { @class = "form-control" })
+        <br />
+        <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
+    </div>
+    }
+</p>
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
@@ -66,4 +79,4 @@
 </table>
 
 
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB }))
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB }))

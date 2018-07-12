@@ -6,15 +6,37 @@ namespace Customer.Models
 {   
 	public  class 客戶聯絡人Repository : EFRepository<客戶聯絡人>, I客戶聯絡人Repository
 	{
-        public IQueryable<客戶聯絡人> 搜尋(string keyword)
+        public IQueryable<客戶聯絡人> 搜尋(IQueryable<客戶聯絡人> 客戶聯絡人, string keyword)
         {
-            var 客戶聯絡人 = this.All();
             if (!String.IsNullOrEmpty(keyword))
             {
                 客戶聯絡人 = 客戶聯絡人.Where(p => p.姓名.Contains(keyword));
             }
             客戶聯絡人 = 客戶聯絡人.OrderBy(p => p.姓名);
             return 客戶聯絡人;
+        }
+
+        public IQueryable<客戶聯絡人> 搜尋職稱(IQueryable<客戶聯絡人> 客戶聯絡人, string keyword)
+        {
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                客戶聯絡人 = 客戶聯絡人.Where(p => p.職稱 == keyword);
+
+            }
+            return 客戶聯絡人;
+        }
+
+        public Dictionary<string, string> 職稱()
+        {
+            var 職稱List = this.All().Select(p=>p.職稱).Distinct();
+            Dictionary<string, string> JobTitle = new Dictionary<string, string>();
+            {
+                foreach(var item in 職稱List)
+                {
+                    JobTitle.Add(item,item);
+                }
+            }
+            return JobTitle;
         }
 
         public 客戶聯絡人 Find(int id)
