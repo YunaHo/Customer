@@ -20,16 +20,25 @@ namespace Customer.Controllers
         }
 
         // GET: 客戶資料
-        public ActionResult Index(string keyword, int Page = 1)
+        public ActionResult Index(string keyword,string keyword2 , int Page = 1)
         {
-            if(string.IsNullOrEmpty(keyword))
+            if (string.IsNullOrEmpty(keyword))
             {
                 keyword = ViewBag.keywordVB;
             }
-            var 客戶資料=客戶資料repo.搜尋(keyword);
+            if (string.IsNullOrEmpty(keyword2))
+            {
+                keyword2 = ViewBag.keyword2VB;
+            }
+            var 客戶資料=客戶資料repo.搜尋(客戶資料repo.All(),keyword);
+            客戶資料 = 客戶資料repo.搜尋分類(客戶資料, keyword2);
 
             ViewBag.keywordVB = keyword;
+            ViewBag.keyword2VB = keyword2;
 
+            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", keyword2);
+
+            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
             return View(客戶資料.ToPagedList(Page, pageSize));
         }
 

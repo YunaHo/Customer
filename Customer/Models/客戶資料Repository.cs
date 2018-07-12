@@ -6,14 +6,24 @@ namespace Customer.Models
 {   
 	public  class 客戶資料Repository : EFRepository<客戶資料>, I客戶資料Repository
 	{
-        public IQueryable<客戶資料> 搜尋(string keyword)
+        public IQueryable<客戶資料> 搜尋(IQueryable<客戶資料> 客戶資料,string keyword)
         {
-            var 客戶資料 = this.All();
             if (!String.IsNullOrEmpty(keyword))
             {
                 客戶資料 = 客戶資料.Where(p => p.客戶名稱.Contains(keyword));
             }
-            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+            return 客戶資料;
+        }
+
+        public IQueryable<客戶資料> 搜尋分類(IQueryable<客戶資料> 客戶資料,string keyword)
+        {
+            if (!String.IsNullOrEmpty(keyword))
+            {
+                int iKeyword;
+                if (!int.TryParse(keyword, out iKeyword)) iKeyword = 0;
+                if (!iKeyword.Equals(0))
+                    客戶資料 = 客戶資料.Where(p => p.客戶分類Id == iKeyword);
+            }
             return 客戶資料;
         }
 

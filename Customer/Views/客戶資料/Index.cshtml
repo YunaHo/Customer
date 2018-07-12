@@ -7,13 +7,15 @@
 <p>
     @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get))
     {
-        <div class="form-horizontal">
-            @Html.Label("客戶名稱")
-            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
-
-            <br />
-            <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
-        </div>
+    <div class="form-horizontal">
+        @Html.Label("客戶名稱")
+        @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
+        <br/>
+        @Html.Label("客戶分類")
+        @Html.DropDownList("keyword2", ViewBag.客戶分類Id as SelectList,"請選擇分類", htmlAttributes: new { @class = "form-control" })
+        <br />
+        <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
+    </div>
     }
 </p>
 <p>
@@ -78,5 +80,5 @@
     }
 </table>
 
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB }))
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB }))
 
