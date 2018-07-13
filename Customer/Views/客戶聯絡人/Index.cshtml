@@ -1,82 +1,83 @@
 ﻿@model IEnumerable<Customer.Models.客戶聯絡人>
 
 @{
-                /**/
-
-                ViewBag.Title = "Index";
+    ViewBag.Title = "客戶聯絡人";
 }
 
 <h2>客戶聯絡人</h2>
 <p>
-    @using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Get))
+    @using (Html.BeginForm("Index", "客戶聯絡人", FormMethod.Get, new { @class = "form-inline" }))
     {
-    <div class="form-horizontal">
-        @Html.Label("姓名")
-        @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入姓名" })
-        <br />
-        @Html.Label("職稱")
-        @Html.DropDownList("keyword2", ViewBag.職稱 as SelectList, "請選擇職稱", htmlAttributes: new { @class = "form-control" })
-        <br />
-        <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
-    </div>
+        <div class="form-group mb-2">
+            @Html.Label("姓名")
+            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入姓名" })
+            <input type="submit" value="搜尋" class="btn btn-primary mb-2" />
+        </div>
+        <br /> <br />
+        <div class="form-group mb-2">
+            @Html.DropDownList("keyword2", ViewBag.職稱 as SelectList, "請選擇職稱", htmlAttributes: new { @class = "form-control", onchange = "this.form.submit();" })
+
+            <input type="button" value="Create New" onclick="location.href='@Url.Action("Create", "客戶聯絡人" )'" class="btn btn-danger" />
+            <input type="button" value="匯出" onclick="location.href='@Url.Action("Export", "客戶聯絡人" )'" class="btn btn-danger" />
+
+            <br />
+        </div>
+
     }
 </p>
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.職稱)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.姓名)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.手機)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.電話)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
-        </th>
-        <th></th>
-    </tr>
+    <table class="table">
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.職稱)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.姓名)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.手機)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.電話)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.客戶資料.客戶名稱)
+            </th>
+            <th></th>
+        </tr>
 
-    @foreach (var item in Model)
-    {
-<tr>
-    <td>
-        @Html.DisplayFor(modelItem => item.職稱)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.姓名)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.Email)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.手機)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.電話)
-    </td>
-    <td>
-        @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
-    </td>
-    <td>
-        @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-        @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-        @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-    </td>
-</tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.職稱)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.姓名)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.手機)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.電話)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.客戶資料.客戶名稱)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
 
-</table>
+    </table>
 
 
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB }))
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB }))

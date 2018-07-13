@@ -5,21 +5,23 @@
 
 <h2>客戶資料</h2>
 <p>
-    @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get))
+    @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get, new { @class = "form-inline" }))
     {
-    <div class="form-horizontal">
-        @Html.Label("客戶名稱")
-        @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
-        <br/>
-        @Html.Label("客戶分類")
-        @Html.DropDownList("keyword2", ViewBag.客戶分類Id as SelectList,"請選擇分類", htmlAttributes: new { @class = "form-control" })
-        <br />
-        <input type="submit" value="搜尋" class="btn btn-primary  btn-block" />
-    </div>
+        <div class="form-group mb-2">
+            @Html.Label("客戶名稱")
+            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
+            <input type="submit" value="搜尋" class="btn btn-primary mb-2" />
+        </div>
+        <br /> <br />
+        <div class="form-group mb-2">
+            @Html.DropDownList("keyword2", ViewBag.客戶分類Id as SelectList, "請選擇客戶分類", htmlAttributes: new { @class = "form-control", onchange = "this.form.submit();" })
+
+            <input type="button" value="Create New" onclick="location.href='@Url.Action(" Create", "客戶資料" )'" class="btn btn-danger" />
+            <input type="button" value="匯出" onclick="location.href='@Url.Action("Export", "客戶資料" )'" class="btn btn-danger" />
+
+            <br />
+        </div>
     }
-</p>
-<p>
-    @Html.ActionLink("Create New", "Create")
 </p>
 <table class="table">
     <tr>

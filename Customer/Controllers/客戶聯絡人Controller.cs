@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using Customer.Models.ExportExcel;
 using X.PagedList;
 
 namespace Customer.Controllers
@@ -41,7 +42,17 @@ namespace Customer.Controllers
             return View(客戶聯絡人.ToPagedList(Page, pageSize));
         }
 
+        public ActionResult Export()
+        {
+            ExportExcelResult ExportExcel = new ExportExcelResult();
+            var 匯出客戶聯絡人資料 = 客戶聯絡人repo.Export(客戶聯絡人repo.All());
+            DataTable dt客戶聯絡人資料 = ExportExcel.LinqQueryToDataTable(匯出客戶聯絡人資料);
+            ExportExcel.ExportData = dt客戶聯絡人資料;
+            ExportExcel.FileName = "客戶聯絡人資料";
+            ExportExcel.SheetName = "客戶聯絡人資料";
 
+            return ExportExcel.ExportExcel();
+        }
 
         // GET: 客戶聯絡人/Details/5
         public ActionResult Details(int? id)

@@ -1,7 +1,8 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-	
+using Customer.Models.ExportViewModel;
+
 namespace Customer.Models
 {   
 	public  class 客戶聯絡人Repository : EFRepository<客戶聯絡人>, I客戶聯絡人Repository
@@ -24,6 +25,21 @@ namespace Customer.Models
 
             }
             return 客戶聯絡人;
+        }
+
+        public IQueryable<匯出客戶聯絡人ViewModel> Export(IQueryable<客戶聯絡人> 客戶聯絡人)
+        {
+            var 匯出客戶聯絡人資料 = 客戶聯絡人.Select(x => new 匯出客戶聯絡人ViewModel()
+            {
+                客戶名稱 = x.客戶資料.客戶名稱,
+                職稱 = x.職稱,
+                姓名 = x.姓名,
+                Email = x.Email,
+                手機 = x.手機,
+                電話 = x.電話
+            });
+
+            return 匯出客戶聯絡人資料;
         }
 
         public Dictionary<string, string> 職稱()

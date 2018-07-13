@@ -1,21 +1,38 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
-	
+using Customer.Models.ExportViewModel;
+
 namespace Customer.Models
 {   
 	public  class 客戶銀行資訊Repository : EFRepository<客戶銀行資訊>, I客戶銀行資訊Repository
 	{
 
-        public IQueryable<客戶銀行資訊> 搜尋(string keyword)
+        public IQueryable<客戶銀行資訊> 搜尋客戶名稱(IQueryable<客戶銀行資訊> 客戶銀行資訊, string keyword)
         {
-            var 客戶銀行資訊 = this.All();
             if (!String.IsNullOrEmpty(keyword))
             {
-                客戶銀行資訊 = 客戶銀行資訊.Where(p => p.帳戶名稱.Contains(keyword));
+                int iKeyword;
+                if (!int.TryParse(keyword, out iKeyword)) iKeyword = 0;
+                if (!iKeyword.Equals(0))
+                    客戶銀行資訊 = 客戶銀行資訊.Where(p => p.客戶Id == iKeyword);
             }
-            客戶銀行資訊 = 客戶銀行資訊.OrderBy(p => p.帳戶名稱);
             return 客戶銀行資訊;
+        }
+
+        public IQueryable<匯出客戶銀行資訊ViewModel> Export(IQueryable<客戶銀行資訊> 客戶銀行資訊)
+        {
+            var 匯出客戶銀行資訊資料 = 客戶銀行資訊.Select(x => new 匯出客戶銀行資訊ViewModel()
+            {
+                客戶名稱 = x.客戶資料.客戶名稱,
+                銀行名稱 = x.銀行名稱,
+                銀行代碼 = x.銀行代碼,
+                分行代碼 = x.分行代碼,
+                帳戶名稱 = x.帳戶名稱,
+                帳戶號碼 = x.帳戶號碼
+            });
+
+            return 匯出客戶銀行資訊資料;
         }
 
         public 客戶銀行資訊 Find(int id)

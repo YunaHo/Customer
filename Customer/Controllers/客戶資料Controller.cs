@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using Customer.Models.ExportExcel;
 using X.PagedList;
 
 namespace Customer.Controllers
@@ -39,8 +40,22 @@ namespace Customer.Controllers
             ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", keyword2);
 
             客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+            
             return View(客戶資料.ToPagedList(Page, pageSize));
         }
+
+        public ActionResult Export()
+        {
+            ExportExcelResult ExportExcel = new ExportExcelResult();
+            var 匯出的客戶資料 = 客戶資料repo.Export(客戶資料repo.All());
+            DataTable dt客戶資料 = ExportExcel.LinqQueryToDataTable(匯出的客戶資料);
+            ExportExcel.ExportData = dt客戶資料;
+            ExportExcel.FileName = "客戶資料";
+            ExportExcel.SheetName = "客戶資料";
+
+            return ExportExcel.ExportExcel();
+        }
+
 
 
         // GET: 客戶資料/Details/5

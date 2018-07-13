@@ -7,6 +7,7 @@ using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
+using Customer.Models.ExportExcel;
 using X.PagedList;
 
 namespace Customer.Controllers
@@ -19,20 +20,35 @@ namespace Customer.Controllers
             客戶銀行資訊repo = RepositoryHelper.Get客戶銀行資訊Repository();
         }
 
-        // GET: 客戶銀行資訊
-        public ActionResult Index(string keyword, int Page = 1)
+        // GET: 客戶資料
+        public ActionResult Index(string keyword,int Page = 1)
         {
             if (string.IsNullOrEmpty(keyword))
             {
                 keyword = ViewBag.keywordVB;
             }
-            var 客戶銀行資訊 = 客戶銀行資訊repo.搜尋(keyword);
+            var 客戶銀行資訊 = 客戶銀行資訊repo.搜尋客戶名稱(客戶銀行資訊repo.All(), keyword);
 
             ViewBag.keywordVB = keyword;
+
+            ViewBag.客戶名稱 = new SelectList(客戶資料repo.All(), "Id", "客戶名稱", keyword);
+
+            客戶銀行資訊 = 客戶銀行資訊.OrderBy(p => p.客戶Id);
 
             return View(客戶銀行資訊.ToPagedList(Page, pageSize));
         }
 
+        public ActionResult Export()
+        {
+            ExportExcelResult ExportExcel = new ExportExcelResult();
+            var 匯出客戶銀行資訊資料 = 客戶銀行資訊repo.Export(客戶銀行資訊repo.All());
+            DataTable dt客戶銀行資訊資料 = ExportExcel.LinqQueryToDataTable(匯出客戶銀行資訊資料);
+            ExportExcel.ExportData = dt客戶銀行資訊資料;
+            ExportExcel.FileName = "客戶銀行資訊資料";
+            ExportExcel.SheetName = "客戶銀行資訊資料";
+
+            return ExportExcel.ExportExcel();
+        }
 
         // GET: 客戶銀行資訊/Details/5
         public ActionResult Details(int? id)
