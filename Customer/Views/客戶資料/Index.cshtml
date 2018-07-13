@@ -26,10 +26,10 @@
 <table class="table">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.客戶分類.分類名稱)
+            @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶分類.分類名稱).ToHtmlString(), "Index", new { sortBy = "分類名稱", currentSort = ViewBag.CurrentSort,change="1" }, htmlAttributes: new { @class = ViewBag.CurrentSort })
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.客戶名稱)
+            @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶名稱).ToHtmlString(), "Index", new { sortBy = "客戶名稱", currentSort = ViewBag.CurrentSort, change = "1" }, htmlAttributes: new { @class = ViewBag.CurrentSort })
         </th>
         <th>
             @Html.DisplayNameFor(model => model.統一編號)
@@ -82,5 +82,5 @@
     }
 </table>
 
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB }))
+@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB, sortBy=ViewBag.sortBy, currentSort = ViewBag.linkSort }))
 

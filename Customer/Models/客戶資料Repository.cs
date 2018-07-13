@@ -44,8 +44,33 @@ namespace Customer.Models
             return 匯出的客戶資料;
         }
 
-       
-
+        public IQueryable<客戶資料> Sort(IQueryable<客戶資料> 客戶資料, string OrderName,string currentSort)
+        {
+            if (!string.IsNullOrEmpty(currentSort))
+            {
+                switch (OrderName)
+                {
+                    case "分類名稱":
+                        if (currentSort.Equals("desc"))
+                            客戶資料 = 客戶資料.OrderByDescending(p => p.客戶分類.分類名稱);
+                        else
+                            客戶資料 = 客戶資料.OrderBy(p => p.客戶分類.分類名稱);
+                        break;
+                    case "客戶名稱":
+                        if (currentSort.Equals("desc"))
+                            客戶資料 = 客戶資料.OrderByDescending(p => p.客戶名稱);
+                        else
+                            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+                        break;
+                    default:
+                        客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+                        break;
+                }
+            }
+            else
+                客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
+            return 客戶資料;
+        }
         public 客戶資料 Find(int id)
         {
             return this.All().FirstOrDefault(p => p.Id == id);

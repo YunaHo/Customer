@@ -22,3 +22,8 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.desc{color:#ff0000;}
+.asc {
+    color: #000000;
+}

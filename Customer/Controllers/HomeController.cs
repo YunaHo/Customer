@@ -10,10 +10,11 @@ namespace Customer.Controllers
     {
         public ActionResult Index()
         {
-            
             var 客戶資料統計 = db.usp_客戶資料統計();
             return View(客戶資料統計);
         }
+
+
 
         public ActionResult About()
         {

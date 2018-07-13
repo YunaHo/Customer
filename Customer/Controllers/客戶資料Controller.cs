@@ -21,7 +21,7 @@ namespace Customer.Controllers
         }
 
         // GET: 客戶資料
-        public ActionResult Index(string keyword,string keyword2 , int Page = 1)
+        public ActionResult Index(string keyword,string keyword2 ,string sortBy,string currentSort, string change, int Page = 1)
         {
             if (string.IsNullOrEmpty(keyword))
             {
@@ -31,16 +31,47 @@ namespace Customer.Controllers
             {
                 keyword2 = ViewBag.keyword2VB;
             }
-            var 客戶資料=客戶資料repo.搜尋(客戶資料repo.All(),keyword);
+
+            if (string.IsNullOrEmpty(sortBy)) 
+            {
+                sortBy = ViewBag.sortBy;
+                ViewBag.currentSort = "desc";
+            }
+
+            if (string.IsNullOrEmpty(currentSort))
+            {
+                currentSort = ViewBag.currentSort;
+            }
+
+
+            var 客戶資料 = 客戶資料repo.搜尋(客戶資料repo.All(), keyword);
             客戶資料 = 客戶資料repo.搜尋分類(客戶資料, keyword2);
+
+
 
             ViewBag.keywordVB = keyword;
             ViewBag.keyword2VB = keyword2;
+            ViewBag.sortBy = sortBy;
+            ViewBag.linkSort = currentSort;
+            if (!string.IsNullOrEmpty(change))
+            {
+                if (string.IsNullOrEmpty(currentSort))
+                    ViewBag.currentSort = "asc";
+                else
+                {
+                    if (currentSort.Equals("asc"))
+                        ViewBag.currentSort = "desc";
+                    else
+                        ViewBag.currentSort = "asc";
+                }
+            }
+            else
+                ViewBag.currentSort = currentSort;
 
             ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", keyword2);
 
-            客戶資料 = 客戶資料.OrderBy(p => p.客戶名稱);
-            
+            客戶資料 = 客戶資料repo.Sort(客戶資料, sortBy, currentSort);
+
             return View(客戶資料.ToPagedList(Page, pageSize));
         }
 
