@@ -1,86 +1,126 @@
 ﻿@model IEnumerable<Customer.Models.客戶資料>
+@using Customer.Models.Search;
 @{
+    客戶資料SearchViewModel 客戶資料Search = ViewBag.SearchViewModel;
+    SoreViewModel SoreViewModel = ViewBag.SoreViewModel;
+    IEnumerable<SelectListItem> 客戶分類 = this.ViewBag.Find客戶分類;
     ViewBag.Title = "客戶資料";
 }
 
 <h2>客戶資料</h2>
 <p>
-    @using (Html.BeginForm("Index", "客戶資料", FormMethod.Get, new { @class = "form-inline" }))
-    {
+
+    <form id="Form1" action="@Url.Action("Index","客戶資料")" class="form-inline" method="post">
+        @Html.Hidden("Page", SoreViewModel.Page.ToString())
+        @Html.Hidden("SortName", SoreViewModel.SortName)
+        @Html.Hidden("SortOrder", SoreViewModel.SortOrder)
+        @Html.Hidden("ResetType", "T")
         <div class="form-group mb-2">
             @Html.Label("客戶名稱")
-            @Html.TextBox("keyword", ViewBag.keywordVB as string, new { @class = "form-control search", placeholder = "請輸入客戶名稱" })
+            @Html.TextBox("Find客戶名稱", null, new { @class = "form -control search", placeholder = "請輸入客戶名稱" })
             <input type="submit" value="搜尋" class="btn btn-primary mb-2" />
         </div>
         <br /> <br />
         <div class="form-group mb-2">
-            @Html.DropDownList("keyword2", ViewBag.客戶分類Id as SelectList, "請選擇客戶分類", htmlAttributes: new { @class = "form-control", onchange = "this.form.submit();" })
-
-            <input type="button" value="Create New" onclick="location.href='@Url.Action(" Create", "客戶資料" )'" class="btn btn-danger" />
+            @Html.DropDownList("Find客戶分類", 客戶分類, "請選擇客戶分類", htmlAttributes: new { @class = "form-control" })
+            <input type="button" value="Create New" onclick="location.href='@Url.Action("Create", "客戶資料" )'" class="btn btn-danger" />
             <input type="button" value="匯出" onclick="location.href='@Url.Action("Export", "客戶資料" )'" class="btn btn-danger" />
 
             <br />
         </div>
-    }
-</p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶分類.分類名稱).ToHtmlString(), "Index", new { sortBy = "分類名稱", currentSort = ViewBag.CurrentSort,change="1" }, htmlAttributes: new { @class = ViewBag.CurrentSort })
-        </th>
-        <th>
-            @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶名稱).ToHtmlString(), "Index", new { sortBy = "客戶名稱", currentSort = ViewBag.CurrentSort, change = "1" }, htmlAttributes: new { @class = ViewBag.CurrentSort })
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.統一編號)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.電話)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.傳真)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.地址)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
+    </form>
+    <table class="table">
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.客戶分類.分類名稱)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.客戶名稱)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.統一編號)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.電話)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.傳真)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.地址)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Email)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                @Html.ActionLink("Details", "Details", new { id = item.Id }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.Id })
-            </td>
+            <th>
+                @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶分類.分類名稱).ToHtmlString(), "Index",null, htmlAttributes: new { @class = "jsSubject", data_SubjectName= "客戶分類Id" })
+            </th>
+            <th>
+                @Html.ActionLink(@Html.DisplayNameFor(model => model.客戶名稱).ToHtmlString(), "Index", null, htmlAttributes: new { @class = "jsSubject",data_SubjectName= @Html.DisplayNameFor(model => model.客戶名稱).ToHtmlString() })
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.統一編號)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.電話)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.傳真)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.地址)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th></th>
         </tr>
+
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.客戶分類.分類名稱)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.客戶名稱)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.統一編號)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.電話)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.傳真)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.地址)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Email)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </table>
+
+    @Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page }))
+
+    @section scripts {
+        <script src="~/Scripts/jquery.url.js"></script>
+        <script type="text/javascript">
+            $(document).ready(function () {
+
+                $("#Form1").on("submit", function (event) {
+                    if ($("#ResetType").val() === "T") $("#Page").val("1");
+                    return true;
+                });
+
+                $(".pagination a").on("click", function (event) {
+                    event.preventDefault();
+                    $.url.init($(this).attr("href"))
+                    $("#Page").val($.url.param("page"));
+                    $("#ResetType").val("F");
+                    $("#Form1").submit();
+                });
+
+
+                $(".jsSubject").on("click", function (event) {
+                    event.preventDefault();
+                    $("#SortName").val($(this).data("subjectname"));
+                    $("#SortOrder").val(($("#SortOrder").val() == "DESC") ? "ASC" :"DESC");
+                    
+                    $("#ResetType").val("F");
+                    $("#Form1").submit();
+                });
+
+                $("#Form1 select").on("change", function () {
+                    $("#Form1").submit();
+                });
+            })
+        </script>
     }
-</table>
-
-@Html.PagedListPager((IPagedList)Model, page => Url.Action("Index", new { page, keyword = ViewBag.keywordVB, keyword2 = ViewBag.keyword2VB, sortBy=ViewBag.sortBy, currentSort = ViewBag.linkSort }))
-

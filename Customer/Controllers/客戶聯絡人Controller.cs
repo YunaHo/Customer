@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
 using Customer.Models.ExportExcel;
+using Customer.Models.Search;
+using Customer.Models.ViewModel;
 using X.PagedList;
 
 namespace Customer.Controllers
@@ -22,24 +25,24 @@ namespace Customer.Controllers
         // GET: 客戶聯絡人
         public ActionResult Index(string keyword,string  keyword2, int Page = 1)
         {
-            if (string.IsNullOrEmpty(keyword))
-            {
-                keyword = ViewBag.keywordVB;
-            }
-            if (string.IsNullOrEmpty(keyword2))
-            {
-                keyword2 = ViewBag.keyword2VB;
-            }
+            ViewBag.Find職稱 = new SelectList(客戶聯絡人repo.職稱(), "key", "value");
+            ViewBag.SearchViewModel = new 客戶聯絡人SearchViewModel();
+            SoreViewModel SoreVM = new SoreViewModel();
+            SoreVM.SortName = "Id";
+            ViewBag.SoreViewModel = SoreVM;
+            return View(客戶聯絡人repo.All().ToPagedList(1, pageSize));
+        }
 
-            var 客戶聯絡人 = 客戶聯絡人repo.搜尋(客戶聯絡人repo.All(), keyword);
-            客戶聯絡人 = 客戶聯絡人repo.搜尋職稱(客戶聯絡人, keyword2);
-
-            ViewBag.keywordVB = keyword;
-            ViewBag.keyword2VB = keyword2;
-
-            ViewBag.職稱 = new SelectList(客戶聯絡人repo.職稱(), "Key", "Value", keyword2);
-
-            return View(客戶聯絡人.ToPagedList(Page, pageSize));
+        [HttpPost]
+        public ActionResult Index(客戶聯絡人SearchViewModel 客戶聯絡人Search, SoreViewModel SoreVM)
+        {
+            ViewBag.Find職稱 = new SelectList(客戶聯絡人repo.職稱(), "key", "value");
+            var 客戶聯絡人 = 客戶聯絡人repo.搜尋(客戶聯絡人repo.All(), 客戶聯絡人Search.Find姓名);
+            客戶聯絡人 = 客戶聯絡人repo.搜尋職稱(客戶聯絡人, 客戶聯絡人Search.Find職稱);
+            客戶聯絡人 = 客戶聯絡人.OrderBy($"{SoreVM.SortName} {SoreVM.SortOrder}");
+            ViewBag.SearchViewModel = 客戶聯絡人Search;
+            ViewBag.SoreViewModel = SoreVM;
+            return View(客戶聯絡人.ToPagedList(SoreVM.Page, pageSize));
         }
 
         public ActionResult Export()
@@ -161,6 +164,25 @@ namespace Customer.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        public ActionResult BatchUpdate(客戶聯絡人BatchViewModel[] data,客戶資料SearchViewModel 客戶資料Search, SoreViewModel SoreVM)
+        {
+            if (ModelState.IsValid)
+            {
+                foreach (var vm in data)
+                {
+                    var contact = 客戶聯絡人repo.Find(vm.Id);
+                    contact.職稱 = vm.職稱;
+                    contact.手機 = vm.手機;
+                    contact.電話 = vm.電話;
+                }
+                客戶聯絡人repo.UnitOfWork.Commit();
+                return RedirectToAction("Index",new { 客戶資料Search, SoreVM});
+            }
+            
+            return View("Index");
         }
     }
 }

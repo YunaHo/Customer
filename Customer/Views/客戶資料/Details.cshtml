@@ -66,6 +66,8 @@
 
     </dl>
 </div>
+
+@Html.Partial("ConcatList", Model.客戶聯絡人.ToList())
 <p>
     @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
     @Html.ActionLink("Back to List", "Index")

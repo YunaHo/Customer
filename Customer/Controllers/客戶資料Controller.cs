@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Customer.Models;
 using Customer.Models.ExportExcel;
+using Customer.Models.Search;
 using X.PagedList;
 
 namespace Customer.Controllers
@@ -21,60 +23,27 @@ namespace Customer.Controllers
         }
 
         // GET: 客戶資料
-        public ActionResult Index(string keyword,string keyword2 ,string sortBy,string currentSort, string change, int Page = 1)
+        public ActionResult Index()
         {
-            if (string.IsNullOrEmpty(keyword))
-            {
-                keyword = ViewBag.keywordVB;
-            }
-            if (string.IsNullOrEmpty(keyword2))
-            {
-                keyword2 = ViewBag.keyword2VB;
-            }
+            ViewBag.Find客戶分類 = new SelectList(客戶分類repo.All(), "Id", "分類名稱");
+            ViewBag.SearchViewModel = new 客戶資料SearchViewModel();
+            ViewBag.SoreViewModel = new SoreViewModel();
 
-            if (string.IsNullOrEmpty(sortBy)) 
-            {
-                sortBy = ViewBag.sortBy;
-                ViewBag.currentSort = "desc";
-            }
-
-            if (string.IsNullOrEmpty(currentSort))
-            {
-                currentSort = ViewBag.currentSort;
-            }
-
-
-            var 客戶資料 = 客戶資料repo.搜尋(客戶資料repo.All(), keyword);
-            客戶資料 = 客戶資料repo.搜尋分類(客戶資料, keyword2);
-
-
-
-            ViewBag.keywordVB = keyword;
-            ViewBag.keyword2VB = keyword2;
-            ViewBag.sortBy = sortBy;
-            ViewBag.linkSort = currentSort;
-            if (!string.IsNullOrEmpty(change))
-            {
-                if (string.IsNullOrEmpty(currentSort))
-                    ViewBag.currentSort = "asc";
-                else
-                {
-                    if (currentSort.Equals("asc"))
-                        ViewBag.currentSort = "desc";
-                    else
-                        ViewBag.currentSort = "asc";
-                }
-            }
-            else
-                ViewBag.currentSort = currentSort;
-
-            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", keyword2);
-
-            客戶資料 = 客戶資料repo.Sort(客戶資料, sortBy, currentSort);
-
-            return View(客戶資料.ToPagedList(Page, pageSize));
+            return View(客戶資料repo.All().ToPagedList(1, pageSize));
         }
 
+
+        [HttpPost]
+        public ActionResult Index(客戶資料SearchViewModel 客戶資料Search, SoreViewModel SoreVM)
+        {
+            ViewBag.Find客戶分類 = new SelectList(客戶分類repo.All(), "Id", "分類名稱");
+            var 客戶資料 = 客戶資料repo.搜尋(客戶資料repo.All(), 客戶資料Search.Find客戶名稱);
+            客戶資料 = 客戶資料repo.搜尋分類(客戶資料, 客戶資料Search.Find客戶分類);
+            客戶資料 = 客戶資料.OrderBy($"{SoreVM.SortName} {SoreVM.SortOrder}");
+            ViewBag.SearchViewModel = 客戶資料Search;
+            ViewBag.SoreViewModel = SoreVM;
+            return View(客戶資料.ToPagedList(SoreVM.Page, pageSize));
+        }
         public ActionResult Export()
         {
             ExportExcelResult ExportExcel = new ExportExcelResult();
@@ -107,7 +76,7 @@ namespace Customer.Controllers
         // GET: 客戶資料/Create
         public ActionResult Create()
         {
-            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱");
+            ViewBag.Find客戶分類 = new SelectList(客戶分類repo.All(), "Id", "分類名稱");
             return View();
         }
 
@@ -140,7 +109,7 @@ namespace Customer.Controllers
             {
                 return HttpNotFound();
             }
-            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
+            ViewBag.Find客戶分類 = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
             return View(客戶資料);
         }
 
@@ -158,7 +127,7 @@ namespace Customer.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            ViewBag.客戶分類Id = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
+            ViewBag.Find客戶分類 = new SelectList(客戶分類repo.All(), "Id", "分類名稱", 客戶資料.客戶分類Id);
             return View(客戶資料);
         }
 
@@ -196,5 +165,12 @@ namespace Customer.Controllers
             }
             base.Dispose(disposing);
         }
+        public ActionResult ConcatList(int id)
+        {
+            ViewData.Model = 客戶資料repo.Find(id);
+            return PartialView("ConcatList");
+        }
+
+
     }
 }
